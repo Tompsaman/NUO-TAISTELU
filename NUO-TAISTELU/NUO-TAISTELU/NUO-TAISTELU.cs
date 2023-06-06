@@ -15,45 +15,39 @@ public class NUO_TAISTELU : PhysicsGame
     Image failcard = LoadImage("failcard");
     Image kuusi = LoadImage("kuusi");
     Image kahdeksan = LoadImage("kahdeksan");
-    public override void Begin()
+
+    private void LuoKentta()
     {
         Level.Background.Image = tausta;
+        Level.Background.ScaleToLevelFull();
+        IsFullScreen = true;
 
-        PhysicsObject Kortti = new PhysicsObject(170, 240);
+        Camera.ZoomToLevel();
+        double paikka = 140;
+        LuoKortti(kuusi,paikka);
+        double paikkamuutos = 170;
+        paikka = paikka + paikkamuutos;
+        LuoKortti(failcard,paikka);
+        paikka = paikka + paikkamuutos;
+        LuoKortti(kahdeksan,paikka);
+        paikka = paikka + paikkamuutos;
+        LuoKortti(viisi,paikka);
+    }
+
+    private void LuoKortti(Image image, double paikka)
+    {
+        PhysicsObject Kortti = new PhysicsObject(100, 160);
         
-        Kortti.X = Kortti.X - 140;
-        Kortti.Y = Kortti.Y - 350;
+        Kortti.X =  paikka;
+        Kortti.Y =   - 300;
         
         Kortti.Color = Color.Red;
-        Kortti.Image = kuusi;
+        Kortti.Image = image;
         Add(Kortti);
-        
-        PhysicsObject Kortti2 = new PhysicsObject(170, 240);
-        
-        Kortti2.X = Kortti2.X + 100;
-        Kortti2.Y = Kortti2.Y - 350;
-        
-        Kortti2.Color = Color.Red;
-        Kortti2.Image = failcard;
-        Add(Kortti2);
-        
-        PhysicsObject Kortti3 = new PhysicsObject(170, 240);
-        
-        Kortti3.X = Kortti3.X + 340;
-        Kortti3.Y = Kortti3.Y - 350;
-        
-        Kortti3.Color = Color.Red;
-        Kortti3.Image = kahdeksan;
-        Add(Kortti3);
-        
-        PhysicsObject Kortti4 = new PhysicsObject(170, 240);
-        
-        Kortti4.X = Kortti4.X + 580;
-        Kortti4.Y = Kortti4.Y - 350;
-        
-        Kortti4.Color = Color.Red;
-        Kortti4.Image = viisi;
-        Add(Kortti4);
+    }
+    public override void Begin()
+    {
+        LuoKentta();
         
         PhysicsObject kasi = new PhysicsObject(270, 480);
         
