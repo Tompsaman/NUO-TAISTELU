@@ -18,6 +18,49 @@ public class NUO_TAISTELU : PhysicsGame
     Image ukko = LoadImage("ukko");
     Image NUO = LoadImage("NUO");
     Image nolla = LoadImage("nolla");
+    Image phone = LoadImage("phone");
+    
+    DoubleMeter alaspainlaskuri;
+    Timer aikalaskuri;
+    private int lasku2 = 1;
+
+    private PhysicsObject kasi;
+    
+    void LuoAikalaskuri()
+    {
+        alaspainlaskuri = new DoubleMeter(20);
+    
+        aikalaskuri = new Timer();
+        aikalaskuri.Interval = 2;
+        aikalaskuri.Timeout += LaskeAlaspain;
+        aikalaskuri.Start();
+        
+        
+        
+        Label aikanaytto = new Label();
+        aikanaytto.TextColor = Color.White;
+        aikanaytto.DecimalPlaces = 1;
+        aikanaytto.BindTo(alaspainlaskuri);
+        aikanaytto.X = 670;
+        aikanaytto.Y = 370;
+        Add(aikanaytto, 1);
+        
+        
+    }
+    void LaskeAlaspain()
+    {
+        switch (lasku2)
+        {
+            case 1:
+                kasi.Image = phone;
+                break;
+            case 2:
+                ukko.Image = phone;
+                break;
+        }
+        kasi.Image = phone;
+        lasku2++;
+    }
 
     private void LuoKentta()
     {
@@ -25,6 +68,8 @@ public class NUO_TAISTELU : PhysicsGame
         //ajastin.Interval = 1.5;
         //ajastin.Timeout += 
         //ajastin.Start();
+        
+        LuoAikalaskuri();
         
         Level.Background.Image = tausta_uusi;
         Level.Background.ScaleToLevelFull();
@@ -40,28 +85,11 @@ public class NUO_TAISTELU : PhysicsGame
         LuoKortti(kahdeksan,paikka);
         paikka = paikka + paikkamuutos;
         LuoKortti(viisi,paikka);
-    }
-
-    private void LuoKortti(Image image, double paikka)
-    {
-
-        PhysicsObject Kortti = new PhysicsObject(100, 160);
         
-        Kortti.X =  paikka;
-        Kortti.Y =   - 300;
-        
-        Kortti.Color = Color.Red;
-        Kortti.Image = image;
-        Add(Kortti);
-    }
-    public override void Begin()
-    {
-        LuoKentta();
-        
-        PhysicsObject kasi = new PhysicsObject(200, 400);
+        kasi = new PhysicsObject(200, 400);
         
         kasi.X = kasi.X + 600;
-        kasi.Y = kasi.Y - 300;
+        kasi.Y = kasi.Y - 200;
         
         kasi.Image = olionKuva;
 
@@ -96,6 +124,25 @@ public class NUO_TAISTELU : PhysicsGame
 
         Add(aloitusKortti);
         aloitusKortti.Angle = Angle.FromDegrees(14);
+    }
+
+    private void LuoKortti(Image image, double paikka)
+    {
+
+        PhysicsObject Kortti = new PhysicsObject(100, 160);
+        
+        Kortti.X =  paikka;
+        Kortti.Y =   - 300;
+        
+        Kortti.Color = Color.Red;
+        Kortti.Image = image;
+        Add(Kortti);
+    }
+    public override void Begin()
+    {
+        LuoKentta();
+        
+        
 
         PhoneBackButton.Listen(ConfirmExit, "Lopeta peli");
         Keyboard.Listen(Key.Escape, ButtonState.Pressed, ConfirmExit, "Lopeta peli");
