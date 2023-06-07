@@ -16,10 +16,16 @@ public class NUO_TAISTELU : PhysicsGame
     Image kuusi = LoadImage("kuusi");
     Image kahdeksan = LoadImage("kahdeksan");
     Image ukko = LoadImage("ukko");
-    private Image NUO = LoadImage("NUO");
+    Image NUO = LoadImage("NUO");
+    Image nolla = LoadImage("nolla");
 
     private void LuoKentta()
     {
+        //Timer ajastin = new Timer();
+        //ajastin.Interval = 1.5;
+        //ajastin.Timeout += 
+        //ajastin.Start();
+        
         Level.Background.Image = tausta_uusi;
         Level.Background.ScaleToLevelFull();
         IsFullScreen = true;
@@ -38,6 +44,7 @@ public class NUO_TAISTELU : PhysicsGame
 
     private void LuoKortti(Image image, double paikka)
     {
+
         PhysicsObject Kortti = new PhysicsObject(100, 160);
         
         Kortti.X =  paikka;
@@ -72,13 +79,23 @@ public class NUO_TAISTELU : PhysicsGame
         
         PhysicsObject pakka = new PhysicsObject(100, 160);
         
-        pakka.X = pakka.X + - 0;
-        pakka.Y = pakka.Y + 0;
+        pakka.X = pakka.X + 250;
+        pakka.Y = pakka.Y - 20;
         
         pakka.Image = NUO;
 
         Add(pakka);
         pakka.Angle = Angle.FromDegrees(14);
+        
+        PhysicsObject aloitusKortti = new PhysicsObject(100, 160);
+        
+        aloitusKortti.X = aloitusKortti.X + 100;
+        aloitusKortti.Y = aloitusKortti.Y - 55;
+        
+        aloitusKortti.Image = nolla;
+
+        Add(aloitusKortti);
+        aloitusKortti.Angle = Angle.FromDegrees(14);
 
         PhoneBackButton.Listen(ConfirmExit, "Lopeta peli");
         Keyboard.Listen(Key.Escape, ButtonState.Pressed, ConfirmExit, "Lopeta peli");
