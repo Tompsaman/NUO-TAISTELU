@@ -95,7 +95,7 @@ public class NUO_TAISTELU : PhysicsGame
 
     private void LuoKentta()
     {
-        
+        Level.CreateBottomBorder();
         
         LuoAikalaskuri();
         
@@ -194,6 +194,9 @@ public class NUO_TAISTELU : PhysicsGame
                     Add(rajahdys);
                 }
 
+                break;
+            case"viisi":
+                Gravity = new Vector(0.0, -981.0);
                 break;
         }
         
