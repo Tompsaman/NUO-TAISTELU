@@ -9,7 +9,8 @@ namespace NUO_TAISTELU;
 
 public class NUO_TAISTELU : PhysicsGame
 {
-    private Double EVENT_INTERVAL = 1;
+    private Double EVENT_INTERVAL = 5;
+    private Vector ALOITUSKORTTI_POSITION = new Vector(100, - 55);
     Image tausta_uusi = LoadImage("tausta_uusi");
     Image olionKuva = LoadImage("olionKuva");
     Image viisi = LoadImage("viisi");
@@ -22,6 +23,12 @@ public class NUO_TAISTELU : PhysicsGame
     Image phone = LoadImage("phone");
     Image puhe1 = LoadImage("puhe1");
     Image pistooli = LoadImage("pistooli");
+    SoundEffect RAGE = LoadSoundEffect("RAGE");
+    SoundEffect GUNLOAD = LoadSoundEffect("GUNLOAD");
+    SoundEffect CRINTRO = LoadSoundEffect("CRINTRO");
+    SoundEffect NOPE = LoadSoundEffect("NOPE");
+    SoundEffect what = LoadSoundEffect("what");
+    Image puhe2 = LoadImage("puhe2");
 
     DoubleMeter alaspainlaskuri;
     Timer aikalaskuri;
@@ -43,7 +50,7 @@ public class NUO_TAISTELU : PhysicsGame
         aikanaytto.TextColor = Color.White;
         aikanaytto.DecimalPlaces = 1;
         aikanaytto.BindTo(aikalaskuri.SecondCounter);
-        aikanaytto.X = 970;
+        aikanaytto.X = 670;
         aikanaytto.Y = 370;
         Add(aikanaytto, 1);
         
@@ -56,9 +63,11 @@ public class NUO_TAISTELU : PhysicsGame
         {
             case 1:
                 kasi.Image = phone;
+                CRINTRO.Play();
                 break;
             case 2: 
                 äijä.Image = puhe1;
+                RAGE.Play();
                 break;
             case 3:
                 PhysicsObject ase = new PhysicsObject(100, 160);
@@ -70,6 +79,7 @@ public class NUO_TAISTELU : PhysicsGame
 
                 Add(ase);
                 ase.Angle = Angle.FromDegrees(14);
+                GUNLOAD.Play();
                 break;
             case 4:
                 var rajahdys = new Explosion(900);
@@ -85,6 +95,8 @@ public class NUO_TAISTELU : PhysicsGame
 
     private void LuoKentta()
     {
+        
+        
         LuoAikalaskuri();
         
         Level.Background.Image = tausta_uusi;
@@ -93,14 +105,14 @@ public class NUO_TAISTELU : PhysicsGame
 
         Camera.ZoomToLevel();
         double paikka = - 100;
-        LuoKortti(kuusi,paikka);
+        LuoKortti(kuusi,paikka, "kuusi");
         double paikkamuutos = 170;
         paikka = paikka + paikkamuutos;
-        LuoKortti(failcard,paikka);
+        LuoKortti(failcard,paikka, "failcard");
         paikka = paikka + paikkamuutos;
-        LuoKortti(kahdeksan,paikka);
+        LuoKortti(kahdeksan,paikka, "kahdeksan");
         paikka = paikka + paikkamuutos;
-        LuoKortti(viisi,paikka);
+        LuoKortti(viisi,paikka, "viisi");
         
         kasi = new PhysicsObject(200, 400);
         
@@ -122,19 +134,17 @@ public class NUO_TAISTELU : PhysicsGame
         äijä.Angle = Angle.FromDegrees(14);
         
         PhysicsObject pakka = new PhysicsObject(100, 160);
-        
-        pakka.X = pakka.X + 250;
-        pakka.Y = pakka.Y - 20;
-        
+
+        pakka.Position = new Vector(250, -20);
+
         pakka.Image = NUO;
 
         Add(pakka);
         pakka.Angle = Angle.FromDegrees(14);
         
         PhysicsObject aloitusKortti = new PhysicsObject(100, 160);
-        
-        aloitusKortti.X = aloitusKortti.X + 100;
-        aloitusKortti.Y = aloitusKortti.Y - 55;
+
+        aloitusKortti.Position = ALOITUSKORTTI_POSITION;
         
         aloitusKortti.Image = nolla;
 
@@ -144,18 +154,51 @@ public class NUO_TAISTELU : PhysicsGame
        
     }
 
-    private void LuoKortti(Image image, double paikka)
+    private void LuoKortti(Image image, double paikka, string tag)
     {
 
-        PhysicsObject Kortti = new PhysicsObject(100, 160);
+        PhysicsObject kortti = new PhysicsObject(100, 160);
         
-        Kortti.X =  paikka;
-        Kortti.Y =   - 300;
-        
-        Kortti.Color = Color.Red;
-        Kortti.Image = image;
-        Add(Kortti);
+        kortti.X =  paikka;
+        kortti.Y =   - 300;
+        kortti.Tag = tag;
+        kortti.Color = Color.Red;
+        kortti.Image = image;
+        Add(kortti, 1);
+
+        Mouse.ListenOn(kortti, HoverState.On, MouseButton.Left, ButtonState.Pressed, delegate { Siirto(kortti); }, "siirtää korttia");
     }
+
+    private void Siirto(PhysicsObject kortti)
+    {
+        aikalaskuri.Reset();
+        switch (kortti.Tag)
+        {
+            case"kuusi":
+                kortti.Position = RandomGen.NextVector(-300, -300, 300, 300);
+                kortti.IgnoresCollisionResponse = true;
+                NOPE.Play();
+                break;
+            case"failcard":
+                if(kortti.Position ==ALOITUSKORTTI_POSITION)break;
+                kortti.Position = ALOITUSKORTTI_POSITION;
+                kortti.IgnoresCollisionResponse = true;
+                kortti.Angle = Angle.FromDegrees(14);
+                what.Play();
+                äijä.Image = puhe2;
+                for (int i = 0; i < 100; i++)
+                {
+                    var rajahdys = new Explosion(9000);
+                    rajahdys.Position = RandomGen.NextVector(-300, -300, 300, 300);
+                    rajahdys.UseShockWave = true;
+                    Add(rajahdys);
+                }
+
+                break;
+        }
+        
+    }
+
     public override void Begin()
     {
         LuoKentta();
