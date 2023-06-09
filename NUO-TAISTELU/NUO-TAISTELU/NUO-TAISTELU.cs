@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Jypeli;
 using Jypeli.Assets;
 using Jypeli.Controls;
+using Jypeli.Effects;
 using Jypeli.Widgets;
 
 namespace NUO_TAISTELU;
@@ -29,6 +30,9 @@ public class NUO_TAISTELU : PhysicsGame
     SoundEffect NOPE = LoadSoundEffect("NOPE");
     SoundEffect what = LoadSoundEffect("what");
     Image puhe2 = LoadImage("puhe2");
+    SoundEffect collapse = LoadSoundEffect("collapse");
+    Image ase2 = LoadImage("ase2");
+    Image pelokas = LoadImage("pelokas");
 
     DoubleMeter alaspainlaskuri;
     Timer aikalaskuri;
@@ -145,10 +149,11 @@ public class NUO_TAISTELU : PhysicsGame
         PhysicsObject aloitusKortti = new PhysicsObject(100, 160);
 
         aloitusKortti.Position = ALOITUSKORTTI_POSITION;
-        
+        aloitusKortti.Tag = "nolla";
         aloitusKortti.Image = nolla;
 
         Add(aloitusKortti);
+        Mouse.ListenOn(aloitusKortti, HoverState.On, MouseButton.Left, ButtonState.Pressed, delegate { Siirto(aloitusKortti); }, "siirtää korttia");
         aloitusKortti.Angle = Angle.FromDegrees(14);
         
        
@@ -165,7 +170,7 @@ public class NUO_TAISTELU : PhysicsGame
         kortti.Color = Color.Red;
         kortti.Image = image;
         Add(kortti, 1);
-
+        
         Mouse.ListenOn(kortti, HoverState.On, MouseButton.Left, ButtonState.Pressed, delegate { Siirto(kortti); }, "siirtää korttia");
     }
 
@@ -186,10 +191,10 @@ public class NUO_TAISTELU : PhysicsGame
                 kortti.Angle = Angle.FromDegrees(14);
                 what.Play();
                 äijä.Image = puhe2;
-                for (int i = 0; i < 100; i++)
+                for (int i = 0; i < 1000; i++)
                 {
                     var rajahdys = new Explosion(9000);
-                    rajahdys.Position = RandomGen.NextVector(-300, -300, 300, 300);
+                    rajahdys.Position = RandomGen.NextVector(-500, -500, 500, 500);
                     rajahdys.UseShockWave = true;
                     Add(rajahdys);
                 }
@@ -197,6 +202,26 @@ public class NUO_TAISTELU : PhysicsGame
                 break;
             case"viisi":
                 Gravity = new Vector(0.0, -981.0);
+                collapse.Play();
+                break;
+            case"kahdeksan":
+                if(kortti.Position ==ALOITUSKORTTI_POSITION)break;
+                kortti.Position = ALOITUSKORTTI_POSITION;
+                kortti.IgnoresCollisionResponse = true;
+                kortti.Angle = Angle.FromDegrees(14);
+                kasi.Image = ase2;
+                GUNLOAD.Play();
+                äijä.Image = pelokas;
+                break;
+            case "nolla":
+                for (int i = 0; i < 100; i++)
+                {
+                    kortti.Destroy();
+                    PhysicsObject palikka = new PhysicsObject(20, 25);
+                    palikka.Image = nolla;
+                    Add(palikka);
+                    palikka.Color = Color.Blue;
+                }
                 break;
         }
         
@@ -206,8 +231,6 @@ public class NUO_TAISTELU : PhysicsGame
     {
         LuoKentta();
         
-        
-
         PhoneBackButton.Listen(ConfirmExit, "Lopeta peli");
         Keyboard.Listen(Key.Escape, ButtonState.Pressed, ConfirmExit, "Lopeta peli");
         
