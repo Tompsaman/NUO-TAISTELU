@@ -10,7 +10,7 @@ namespace NUO_TAISTELU;
 
 public class NUO_TAISTELU : PhysicsGame
 {
-    private Double EVENT_INTERVAL = 5;
+    private Double EVENT_INTERVAL = 6;
     private Vector ALOITUSKORTTI_POSITION = new Vector(100, - 55);
     Image tausta_uusi = LoadImage("tausta_uusi");
     Image olionKuva = LoadImage("olionKuva");
@@ -33,7 +33,8 @@ public class NUO_TAISTELU : PhysicsGame
     SoundEffect collapse = LoadSoundEffect("collapse");
     Image ase2 = LoadImage("ase2");
     Image pelokas = LoadImage("pelokas");
-
+    SoundEffect shot = LoadSoundEffect("shot");
+    
     DoubleMeter alaspainlaskuri;
     Timer aikalaskuri;
     private int lasku2 = 1;
@@ -86,6 +87,7 @@ public class NUO_TAISTELU : PhysicsGame
                 GUNLOAD.Play();
                 break;
             case 4:
+                shot.Play();
                 var rajahdys = new Explosion(900);
                 rajahdys.Position = new Vector(+ 100, - 20);
                 rajahdys.UseShockWave = true;
@@ -142,6 +144,7 @@ public class NUO_TAISTELU : PhysicsGame
         pakka.Position = new Vector(250, -20);
 
         pakka.Image = NUO;
+        pakka.IgnoresCollisionResponse = true;
 
         Add(pakka);
         pakka.Angle = Angle.FromDegrees(14);
@@ -191,17 +194,17 @@ public class NUO_TAISTELU : PhysicsGame
                 kortti.Angle = Angle.FromDegrees(14);
                 what.Play();
                 äijä.Image = puhe2;
-                for (int i = 0; i < 1000; i++)
+                for (int i = 0; i < 100; i++)
                 {
                     var rajahdys = new Explosion(9000);
-                    rajahdys.Position = RandomGen.NextVector(-500, -500, 500, 500);
+                    rajahdys.Position = RandomGen.NextVector(-800, -800, 800, 800);
                     rajahdys.UseShockWave = true;
                     Add(rajahdys);
                 }
 
                 break;
             case"viisi":
-                Gravity = new Vector(0.0, -981.0);
+                Gravity = new Vector(0.0, -281.0);
                 collapse.Play();
                 break;
             case"kahdeksan":
@@ -209,9 +212,6 @@ public class NUO_TAISTELU : PhysicsGame
                 kortti.Position = ALOITUSKORTTI_POSITION;
                 kortti.IgnoresCollisionResponse = true;
                 kortti.Angle = Angle.FromDegrees(14);
-                kasi.Image = ase2;
-                GUNLOAD.Play();
-                äijä.Image = pelokas;
                 break;
             case "nolla":
                 for (int i = 0; i < 100; i++)
